@@ -13,12 +13,22 @@ export default function Home() {
       image: "/polygon.png",
       name: "Polygon",
       isActive: true,
+      chainId: utils.hexValue(137),
+      chainName: "Polygon Mainnet",
+      nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+      rpcUrls: ["https://polygon-rpc.com/"],
+      blockExplorerUrls: ["https://polygonscan.com"],
     },
     {
       id: 2,
       image: "/eth.png",
       name: "Ethereum",
       isActive: false,
+      chainId: utils.hexValue(1),
+      chainName: "Ethereum Mainnet",
+      nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+      rpcUrls: ["https://api.mycryptoapi.com/eth"],
+      blockExplorerUrls: ["https://etherscan.io"],
     },
   ];
   const [currentNetwork, setCurrentNetwork] = useState(NETWORK_DATA[0]);
@@ -49,6 +59,36 @@ export default function Home() {
       closeModal();
     },
   });
+
+  const handleSwitchNetwork = async () => {
+    try {
+      await window.ethereum?.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId }],
+      });
+      onClose();
+    } catch (switchError) {
+      const err = switchError;
+      if (err.code === 4902) {
+        try {
+          await window.ethereum?.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId,
+                chainName,
+                rpcUrls,
+              },
+            ],
+          });
+          onClose();
+        } catch (addError) {
+          return null;
+        }
+      }
+    }
+    return null;
+  };
   return (
     <>
       <Head>
