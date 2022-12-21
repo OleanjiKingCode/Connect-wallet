@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useState, useEffect, Fragment } from "react";
 import { Listbox, Transition, Dialog, Popover } from "@headlessui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
-import { useNetwork, useAccount, useConnect } from "wagmi";
+import { useNetwork, useAccount, useConnect, useDisconnect } from "wagmi";
 import { config } from "../config";
 import { utils } from "ethers";
 
@@ -14,6 +14,7 @@ export default function Home() {
       image: "/polygon.png",
       name: "Polygon",
       isActive: true,
+      chainNoHex: 137,
       chainId: utils.hexValue(137),
       chainName: "Polygon Mainnet",
       nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
@@ -26,6 +27,7 @@ export default function Home() {
       name: "Ethereum",
       isActive: false,
       chainId: utils.hexValue(1),
+      chainNoHex: 1,
       chainName: "Ethereum Mainnet",
       nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
       rpcUrls: ["https://api.mycryptoapi.com/eth"],
@@ -34,20 +36,21 @@ export default function Home() {
   ];
   const [currentNetwork, setCurrentNetwork] = useState(NETWORK_DATA[0]);
   const { chain } = useNetwork();
-  const { isConnected: isUserConnected } = useAccount();
+  const { isConnected: isUserConnected, address } = useAccount();
 
   useEffect(() => {
     CheckNetwork();
   }, [isUserConnected]);
 
   const CheckNetwork = () => {
-    if (isUserConnected && chain?.id !== config.chainId) {
-      console.log(chain?.id, config.chainId);
-      // onOpenSwitch();
+    if (isUserConnected && chain?.id !== currentNetwork.chainNoHex) {
+      console.log(chain?.id, currentNetwork.chainId);
+      openSwitchOpen();
     }
   };
   let [isOpen, setIsOpen] = useState(false);
-
+  let [walletDetailsOpen, setWalletDetails] = useState(false);
+  let [switchOpen, setSwitchOpen] = useState(false);
   function closeModal() {
     setIsOpen(false);
   }
@@ -55,6 +58,27 @@ export default function Home() {
   function openModal() {
     setIsOpen(true);
   }
+
+  function closeWalletDetails() {
+    setWalletDetails(false);
+  }
+
+  function openWalletDetails() {
+    setWalletDetails(true);
+  }
+
+  function closeSwitchOpen() {
+    setSwitchOpen(false);
+  }
+
+  function openSwitchOpen() {
+    setSwitchOpen(true);
+  }
+  const { disconnect } = useDisconnect();
+  const logout = () => {
+    disconnect();
+    closeWalletDetails();
+  };
   const { connectors, connect } = useConnect({
     onSuccess() {
       closeModal();
@@ -68,7 +92,7 @@ export default function Home() {
         method: "wallet_switchEthereumChain",
         params: [{ chainId }],
       });
-      onClose();
+      closeSwitchOpen();
     } catch (switchError) {
       const err = switchError;
       if (err.code === 4902) {
@@ -83,7 +107,7 @@ export default function Home() {
               },
             ],
           });
-          onClose();
+          closeSwitchOpen();
         } catch (addError) {
           return null;
         }
@@ -166,19 +190,13 @@ export default function Home() {
             </Listbox>
           </div>
           <div>
-            {isUserConnected ? (
-              <div>
-                
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={openModal}
-                className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
-              >
-                Connect Wallet
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={isUserConnected ? openWalletDetails : openModal}
+              className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
+            >
+              {isUserConnected ? "Wallet Details" : "Connect Wallet"}
+            </button>
           </div>
 
           <Transition appear show={isOpen} as={Fragment}>
@@ -212,6 +230,93 @@ export default function Home() {
                         type="button"
                         className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 "
                         onClick={closeModal}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+          <Transition appear show={walletDetailsOpen} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              onClose={closeWalletDetails}
+            >
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Dialog.Panel className="w-full max-w-lg transform ease-in-out duration-300 overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 mb-3 text-gray-900"
+                    >
+                      Wallet Details
+                    </Dialog.Title>
+                    <div className="flex items-center justify-between">
+                      Your Address:
+                      <span className="text-orange-500"> {address}</span>
+                    </div>
+                    <div className="flex items-center text-left">
+                      Network:
+                      <span className="text-orange-500 px-3">
+                        {" "}
+                        {currentNetwork.name}
+                      </span>
+                    </div>
+                    <div className="flex justify-between mt-4">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 "
+                        onClick={logout}
+                      >
+                        Disconnect
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 "
+                        onClick={closeWalletDetails}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+          <Transition appear show={switchOpen} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              onClose={closeSwitchOpen}
+            >
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Dialog.Panel className="w-full max-w-lg transform ease-in-out duration-300 overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 mb-3 text-gray-900"
+                    >
+                      Switch Network
+                    </Dialog.Title>
+                    <div className="flex items-center justify-between">
+                      You need to switch the nework to {currentNetwork.name}
+                    </div>
+                    <div className=" flex justify-between mt-4">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 "
+                        onClick={handleSwitchNetwork}
+                      >
+                        Switch
+                      </button>
+
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 "
+                        onClick={closeSwitchOpen}
                       >
                         Cancel
                       </button>
