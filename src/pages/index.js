@@ -40,7 +40,7 @@ export default function Home() {
 
   useEffect(() => {
     CheckNetwork();
-  }, [isUserConnected]);
+  }, [isUserConnected, currentNetwork]);
 
   const CheckNetwork = () => {
     if (isUserConnected && chain?.id !== currentNetwork.chainNoHex) {
