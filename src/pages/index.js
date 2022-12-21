@@ -84,7 +84,13 @@ export default function Home() {
       closeModal();
     },
   });
+  const getText = (text) => {
+    if (text) {
+      return "Wallet Details";
+    }
 
+    return "Connect Wallet";
+  };
   const handleSwitchNetwork = async () => {
     const { chainId, chainName, rpcUrls } = currentNetwork;
     try {
@@ -195,7 +201,7 @@ export default function Home() {
               onClick={isUserConnected ? openWalletDetails : openModal}
               className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
             >
-              {isUserConnected ? "Wallet Details" : "Connect Wallet"}
+              <p>{getText(isUserConnected)}</p>
             </button>
           </div>
 
@@ -264,6 +270,16 @@ export default function Home() {
                         {" "}
                         {currentNetwork.name}
                       </span>
+                    </div>
+                    <div className="flex items-center text-left">
+                      Scan:{" "}
+                      <a
+                        href={`${currentNetwork.blockExplorerUrls[0]}/address/${address}`}
+                        target="_blank"
+                        className="px-5 text-orange-500"
+                      >
+                        View your assets here{" "}
+                      </a>
                     </div>
                     <div className="flex justify-between mt-4">
                       <button
