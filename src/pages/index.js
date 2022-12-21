@@ -4,6 +4,7 @@ import { useState, useEffect, Fragment } from "react";
 import { Listbox, Transition, Dialog } from "@headlessui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { useNetwork, useAccount, useConnect } from "wagmi";
+import { config } from "../config";
 
 export default function Home() {
   const NETWORK_DATA = [
@@ -152,6 +153,7 @@ export default function Home() {
                     {connectors.map((connector, index) => (
                       <div
                         key={index}
+                        onClick={() => connect({ connector })}
                         className="border-2 rounded-lg my-3 cursor-pointer border-gray-300 w-full text-black px-2 py-3 hover:bg-gray-200 hover:text-gray-800"
                       >
                         {connector.name}
