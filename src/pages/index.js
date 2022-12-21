@@ -1,9 +1,9 @@
 import Head from "next/head";
 
 import { useState, useEffect, Fragment } from "react";
-import { Listbox, Transition } from "@headlessui/react";
-import { RiCheckFill, RiArrowDownSLine } from "react-icons/ri";
-import { useNetwork, useAccount } from "wagmi";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
+import { RiArrowDownSLine } from "react-icons/ri";
+import { useNetwork, useAccount, useConnect } from "wagmi";
 
 export default function Home() {
   const NETWORK_DATA = [
@@ -23,16 +23,31 @@ export default function Home() {
   const [currentNetwork, setCurrentNetwork] = useState(NETWORK_DATA[0]);
   const { chain } = useNetwork();
   const { isConnected: isUserConnected } = useAccount();
-  // useEffect(() => {
-  //   CheckNetwork();
-  // }, [isUserConnected]);
 
-  // const CheckNetwork = () => {
-  //   if (isUserConnected && chain?.id !== config.chainId) {
-  //     console.log(chain?.id, config.chainId);
-  //     onOpenSwitch();
-  //   }
-  // };
+  useEffect(() => {
+    CheckNetwork();
+  }, [isUserConnected]);
+
+  const CheckNetwork = () => {
+    if (isUserConnected && chain?.id !== config.chainId) {
+      console.log(chain?.id, config.chainId);
+      // onOpenSwitch();
+    }
+  };
+  let [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+  const { connectors, connect } = useConnect({
+    onSuccess() {
+      closeModal();
+    },
+  });
   return (
     <>
       <Head>
@@ -43,9 +58,9 @@ export default function Home() {
       </Head>
       <div className="w-full">
         <div
-          className={`w-full h-screen flex flex-col items-center text-center justify-center bg-orange-300 `}
+          className={`w-full h-screen flex items-center text-center justify-center bg-orange-300 `}
         >
-          <div className=" w-72">
+          <div className=" w-72 mr-6">
             <Listbox value={currentNetwork} onChange={setCurrentNetwork}>
               <div className="relative mt-1">
                 <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
@@ -107,6 +122,56 @@ export default function Home() {
               </div>
             </Listbox>
           </div>
+          {!isUserConnected ? (
+            <button
+              type="button"
+              onClick={openModal}
+              className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
+            >
+              Connect Wallet
+            </button>
+          ) : (
+            <div> Connected</div>
+          )}
+          <Transition appear show={isOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={closeModal}>
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Dialog.Panel className="w-full max-w-md transform ease-in-out duration-300 overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-gray-900"
+                    >
+                      Connect Your Wallet
+                    </Dialog.Title>
+                    <div className="mt-2 mx-3">
+                      <p className="text-sm text-gray-500">
+                        Choose from the following
+                      </p>
+                    </div>
+                    {connectors.map((connector, index) => (
+                      <div
+                        key={index}
+                        className="border-2 rounded-lg my-3 cursor-pointer border-gray-300 w-full text-black px-2 py-3 hover:bg-gray-200 hover:text-gray-800"
+                      >
+                        {connector.name}
+                      </div>
+                    ))}
+
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 "
+                        onClick={closeModal}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
         </div>
       </div>
     </>
