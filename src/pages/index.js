@@ -1,10 +1,11 @@
 import Head from "next/head";
 
 import { useState, useEffect, Fragment } from "react";
-import { Listbox, Transition, Dialog } from "@headlessui/react";
+import { Listbox, Transition, Dialog, Popover } from "@headlessui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { useNetwork, useAccount, useConnect } from "wagmi";
 import { config } from "../config";
+import { utils } from "ethers";
 
 export default function Home() {
   const NETWORK_DATA = [
@@ -61,6 +62,7 @@ export default function Home() {
   });
 
   const handleSwitchNetwork = async () => {
+    const { chainId, chainName, rpcUrls } = currentNetwork;
     try {
       await window.ethereum?.request({
         method: "wallet_switchEthereumChain",
@@ -163,17 +165,22 @@ export default function Home() {
               </div>
             </Listbox>
           </div>
-          {!isUserConnected ? (
-            <button
-              type="button"
-              onClick={openModal}
-              className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
-            >
-              Connect Wallet
-            </button>
-          ) : (
-            <div> Connected</div>
-          )}
+          <div>
+            {isUserConnected ? (
+              <div>
+                
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={openModal}
+                className="rounded-lg bg-black bg-opacity-20 px-4 py-2 text-center text-sm font-medium text-white hover:bg-opacity-30 "
+              >
+                Connect Wallet
+              </button>
+            )}
+          </div>
+
           <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={closeModal}>
               <div className="fixed inset-0 overflow-y-auto">
