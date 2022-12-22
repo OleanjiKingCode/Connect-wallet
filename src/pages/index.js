@@ -91,6 +91,8 @@ export default function Home() {
 
     return "Connect Wallet";
   };
+
+  //Switch Network 
   const handleSwitchNetwork = async () => {
     const { chainId, chainName, rpcUrls } = currentNetwork;
     try {
@@ -121,6 +123,8 @@ export default function Home() {
     }
     return null;
   };
+
+  //Frontend 
   return (
     <>
       <Head>
