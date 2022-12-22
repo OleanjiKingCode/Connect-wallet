@@ -1,10 +1,8 @@
 import Head from "next/head";
-
 import { useState, useEffect, Fragment } from "react";
-import { Listbox, Transition, Dialog, Popover } from "@headlessui/react";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { useNetwork, useAccount, useConnect, useDisconnect } from "wagmi";
-import { config } from "../config";
 import { utils } from "ethers";
 
 export default function Home() {
@@ -37,6 +35,10 @@ export default function Home() {
   const [currentNetwork, setCurrentNetwork] = useState(NETWORK_DATA[0]);
   const { chain } = useNetwork();
   const { isConnected: isUserConnected, address } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
+  const [walletDetailsOpen, setWalletDetails] = useState(false);
+  const [switchOpen, setSwitchOpen] = useState(false);
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     CheckNetwork();
@@ -48,9 +50,7 @@ export default function Home() {
       openSwitchOpen();
     }
   };
-  let [isOpen, setIsOpen] = useState(false);
-  let [walletDetailsOpen, setWalletDetails] = useState(false);
-  let [switchOpen, setSwitchOpen] = useState(false);
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -74,7 +74,7 @@ export default function Home() {
   function openSwitchOpen() {
     setSwitchOpen(true);
   }
-  const { disconnect } = useDisconnect();
+
   const logout = () => {
     disconnect();
     closeWalletDetails();
