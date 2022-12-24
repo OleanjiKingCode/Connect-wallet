@@ -1,34 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# A Connect Wallet Dapp example
+
+A Connect wallet dapp built using WAGMI Client, Tailwind CSS, Next Js.
+
+
+**Dapp in production environment**
+
+![expalnation](https://user-images.githubusercontent.com/75235148/204169548-6e222ec5-0599-4811-9d47-afbb362e700b.png)
+
+## Tech Stack
+
+- [**Next.js**](https://nextjs.org/docs/getting-started) : A widely-used framework for building [React](https://reactjs.org/) applications
+- [**Tailwind CSS**](https://tailwindcss.com/docs/installation): A utility-first CSS framework
+- [**Headless-UI**](https://github.com/fisshy/react-scroll): Headless UI has completely unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
+- [**WAGMI**](https://github.com/thebuilder/react-intersection-observer): wagmi is a collection of React Hooks containing everything you need to start working with Ethereum..
+
+
 
 ## Getting Started
-
-First, run the development server:
-
+- Install all dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
+yarn
+# or 
+yarn install
 ```
 
+- Run the development server:
+
+```bash
+yarn dev
+```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Build the app:
+```bash
+yarn build
+```
 
 ## Deploy on Vercel
+The deployed app link: https://connect-wallet-drab.vercel.app/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## About me
+- [Portfolio Website](https://adebayo-s-portfolio.vercel.app/)
+- [Twitter](https://twitter.com/Oleanji_sol)
+- [Linkedin](https://www.linkedin.com/in/adebayo-olamilekan-oleanji/)
+- [Dev](https://dev.to/oleanji)
