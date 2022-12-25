@@ -1,3 +1,4 @@
+// All the needed imports for this application
 import Head from "next/head";
 import { useState, useEffect, Fragment } from "react";
 import { Listbox, Transition, Dialog } from "@headlessui/react";
@@ -6,6 +7,7 @@ import { useNetwork, useAccount, useConnect, useDisconnect } from "wagmi";
 import { utils } from "ethers";
 
 export default function Home() {
+  //The necessary data needed to use the two chains
   const NETWORK_DATA = [
     {
       id: 1,
@@ -32,14 +34,20 @@ export default function Home() {
       blockExplorerUrls: ["https://etherscan.io"],
     },
   ];
+  // states used throughtout this project
   const [currentNetwork, setCurrentNetwork] = useState(NETWORK_DATA[0]);
+  // this sets the network used
   const { chain } = useNetwork();
+  // this gets the chain the user connected to in the app
   const { isConnected: isUserConnected, address } = useAccount();
+  // get a boolean for the connection of a user and also their address
   const [isOpen, setIsOpen] = useState(false);
   const [walletDetailsOpen, setWalletDetails] = useState(false);
   const [switchOpen, setSwitchOpen] = useState(false);
   const { disconnect } = useDisconnect();
+  // this is function used to disconnect a user after connection
 
+  // this checks if the user is connected to the right chain, if not then it opens a modal for you to switch to the right wallet.
   useEffect(() => {
     CheckNetwork();
   }, [isUserConnected, currentNetwork]);
@@ -75,10 +83,12 @@ export default function Home() {
     setSwitchOpen(true);
   }
 
+  // Logout function
   const logout = () => {
     disconnect();
     closeWalletDetails();
   };
+
   const { connectors, connect } = useConnect({
     onSuccess() {
       closeModal();
@@ -92,7 +102,7 @@ export default function Home() {
     return "Connect Wallet";
   };
 
-  //Switch Network 
+  //Switch Network Functionality
   const handleSwitchNetwork = async () => {
     const { chainId, chainName, rpcUrls } = currentNetwork;
     try {
@@ -124,7 +134,7 @@ export default function Home() {
     return null;
   };
 
-  //Frontend 
+  //Frontend
   return (
     <>
       <Head>
